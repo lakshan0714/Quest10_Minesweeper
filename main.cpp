@@ -103,6 +103,75 @@ void Minesweeper::placeFlag(int row, int col) {
         cout << "Invalid move. You can only place a flag on a covered location." << endl;
     }
 }
+bool Minesweeper::checkWin() {
+    // Implement logic to check if the player has won
+    for (int i = 0; i < gridSize; ++i) {
+        for (int j = 0; j < gridSize; ++j) {
+            if (mines[i][j] && field[i][j] != 'F') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int Minesweeper::countAdjacentMines(int row, int col) {
+    // Implement logic to count the number of adjacent mines
+    int count = 0;
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            int newRow = row + i;
+            int newCol = col + j;
+            if (newRow >= 0 && newRow < gridSize && newCol >= 0 && newCol < gridSize) {
+                if (mines[newRow][newCol]) {
+                    ++count;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+void Minesweeper::playGame() {
+    placeMines();
+
+    while (true) {
+        displayField();
+
+        cout << "Enter move (e.g., ABF for flag, ABR for reveal): ";
+        string move;
+        cin >> move;
+
+        if (move.size() != 3) {
+            cout << "Invalid move. Please enter a valid move." << endl;
+            continue;
+        }
+
+        int row = move[0] - 'A';
+        int col = move[1] - 'A';
+
+        if (row < 0 || row >= gridSize || col < 0 || col >= gridSize) {
+            cout << "Invalid move. Please enter a valid move." << endl;
+            continue;
+        }
+
+        char action = move[2];
+
+        if (action == 'F') {
+            placeFlag(row, col);
+        } else if (action == 'R') {
+            revealLocation(row, col);
+        } else {
+            cout << "Invalid move. Please enter a valid move." << endl;
+            continue;
+        }
+
+        if (checkWin()) {
+            cout << "Congratulations! You won!" << endl;
+            break;
+        }
+    }
+}
 
 
 int main() {
